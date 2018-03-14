@@ -23,7 +23,7 @@ PlayState.init = function () {
 };
 
 PlayState.preload = function () {
-	this.game.load.json('level:1', 'data/level01.json';)
+	this.game.load.json('level:1', 'data/level01.json');
 
 	this.game.load.image('background', 'images/background.png');
 	this.game.load.image('ground', 'images/ground.png');
