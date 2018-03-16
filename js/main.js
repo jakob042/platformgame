@@ -1,6 +1,7 @@
 PlayState = {};
 
 PlayState.preload = function () {
+
     this.game.load.json('level:1', 'data/level01.json');
 
     this.game.load.image('background', 'images/background.png');
@@ -34,3 +35,4 @@ window.onload = function () {
     game.state.add('play', PlayState);
     game.state.start('play');
 };
+
