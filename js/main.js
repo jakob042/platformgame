@@ -131,13 +131,12 @@ PlayState._spawnCharacters = function (data) {
     this.hero = new Hero(this.game, data.hero.x, data.hero.y);
     this.game.add.existing(this.hero);
 };
-
 // ===================================================================
 // entry point
 // ===================================================================
-
 window.onload = function () {
     let game = new Phaser.Game(960, 600, Phaser.AUTO, 'game');
     game.state.add('play', PlayState);
     game.state.start('play');
 };
+
