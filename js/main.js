@@ -45,10 +45,10 @@ function Spider(game, x, y) {
 
 Spider.SPEED = 200;
 Spider.prototype = Object.create(Phaser.Sprite.prototype);
-Spider.prototype.constructor = spider;
+Spider.prototype.constructor = Spider;
 
 Spider.prototype.update = function () {
-    if (this.body.touching.right || this.body blocked.right) {
+    if (this.body.touching.right || this.body.blocked.right) {
         this.body.velocity.x = -Spider.SPEED;
     }
     else if (this.body.touching.left || this.body.blocked.left) {
@@ -88,7 +88,7 @@ PlayState.preload = function () {
     this.game.load.image('grass:4x1', 'images/grass_4x1.png');
     this.game.load.image('grass:2x1', 'images/grass_2x1.png');
     this.game.load.image('grass:1x1', 'images/grass_1x1.png');
-    this.game.load.image('hero', 'images/hero_stopped.png');
+    //this.game.load.image('hero', 'images/hero_stopped.png');
 
     this.game.load.spritesheet('coin', 'images/coin_animated.png', 22, 22);
     this.game.load.spritesheet('spider', 'images/spider.png', 42, 32);
@@ -160,7 +160,7 @@ PlayState._spawnPlatform = function (platform) {
 
 PlayState._spawnEnemyWall = function (x, y, side) {
     let sprite = this.enemyWalls.create(x, y, 'invisible-wall');
-    sprite.anchor.set(side === 'left' ? 1 : 0. 1);
+    sprite.anchor.set(side === 'left' ? 1 : 0.1);
     this.game.physics.enable(sprite);
     sprite.body.immovable = true;
     sprite.body.allowGravity = false;
