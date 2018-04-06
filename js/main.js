@@ -2,9 +2,6 @@
 // sprites
 // ==================================================================
 
-//
-// hero sprite
-//
 function Hero(game, x, y) {
     Phaser.Sprite.call(this, game, x, y, 'hero');
     this.anchor.set(0.5, 0.5);
@@ -19,7 +16,7 @@ Hero.prototype = Object.create(Phaser.Sprite.prototype);
 Hero.prototype.constructor = Hero;
 
 Hero.prototype.move = function (direction) {
-    const SPEED = 200;
+    const SPEED = 400;
     this.body.velocity.x = direction * SPEED;
 };
 
@@ -34,6 +31,30 @@ Hero.prototype.jump = function () {
     return canJump;
 };
 
+function Spider(game, x, y) {
+    Phaser.Sprite.call(this, game, x, y, 'Spider');
+
+    this.anchor.set(0.5);
+    this.animations.add('crawl', [0, 1, 2], 8, true);
+    this.animations.play('crawl');
+
+    this.game.physics.enable(this);
+    this.body.collideWorldBounds = true;
+    this.body.velocity.x = Spider.SPEED;
+};
+
+Spider.SPEED = 200;
+Spider.prototype = Object.create(Phaser.Sprite.prototype);
+Spider.prototype.constructor = Spider;
+
+Spider.prototype.update = function () {
+    if (this.body.touching.right || this.body.blocked.right) {
+        this.body.velocity.x = -Spider.SPEED;
+    }
+    else if (this.body.touching.left || this.body.blocked.left) {
+        this.body.velocity.x = Spider.SPEED;
+    }
+};
 // ===================================================================
 // game states
 // ===================================================================
@@ -67,15 +88,20 @@ PlayState.preload = function () {
     this.game.load.image('grass:4x1', 'images/grass_4x1.png');
     this.game.load.image('grass:2x1', 'images/grass_2x1.png');
     this.game.load.image('grass:1x1', 'images/grass_1x1.png');
-    this.game.load.image('hero', 'images/hero_stopped.png');
+    //this.game.load.image('hero', 'images/hero_stopped.png');
+
+    this.game.load.spritesheet('coin', 'images/coin_animated.png', 22, 22);
+    this.game.load.spritesheet('spider', 'images/spider.png', 42, 32);
 
     this.game.load.audio('sfx:jump', 'audio/jump.wav');
+    this.game.load.audio('sfx:coin', 'audio/coin.wav');
 };
 
 PlayState.create = function () {
     // create sound entities
     this.sfx = {
-        jump: this.game.add.audio('sfx:jump')
+        jump: this.game.add.audio('sfx:jump'),
+        coin: this.game.add.audio('sfx:coin'),
     };
 
     this.game.add.image(0, 0, 'background');
@@ -88,7 +114,11 @@ PlayState.update = function () {
 };
 
 PlayState._handleCollisions = function () {
+    this.game.physics.arcade.collide(this.spiders, this.platforms);
+    this.game.physics.arcade.collide(this.spiders, this.enemyWalls);
     this.game.physics.arcade.collide(this.hero, this.platforms);
+
+    this.game.physics.arcade.overlap(this.hero, this.coins, this._onHeroVsCoin, null, this);
 };
 
 PlayState._handleInput = function () {
@@ -104,13 +134,15 @@ PlayState._handleInput = function () {
 };
 
 PlayState._loadLevel = function (data) {
-    // create all the groups/layers that we need
     this.platforms = this.game.add.group();
+    this.coins = this.game.add.group();
+    this.spiders = this.game.add.group();
+    this.enemyWalls = this.game.add.group();
+    this.enemyWalls.visible = false;
 
-    // spawn all platforms
     data.platforms.forEach(this._spawnPlatform, this);
-    // spawn hero and enemies
-    this._spawnCharacters({hero: data.hero, spiders: data.spiders});
+    this._spawnCharacters({hero: data.hero, goomba: data.goomba});
+    data.coins.forEach(this._spawnCoin, this);
 
     // enable gravity
     const GRAVITY = 1200;
@@ -126,10 +158,40 @@ PlayState._spawnPlatform = function (platform) {
     sprite.body.immovable = true;
 };
 
+PlayState._spawnEnemyWall = function (x, y, side) {
+    let sprite = this.enemyWalls.create(x, y, 'invisible-wall');
+    sprite.anchor.set(side === 'left' ? 1 : 0.1);
+    this.game.physics.enable(sprite);
+    sprite.body.immovable = true;
+    sprite.body.allowGravity = false;
+}
+
 PlayState._spawnCharacters = function (data) {
+   //spawn spiders
+   data.spiders.forEach(function (spider) {
+    let sprite = new Spider(this.game, spider.x, spider.y);
+    this.spiders.add(sprite);
+   }, this);
+
     // spawn hero
     this.hero = new Hero(this.game, data.hero.x, data.hero.y);
     this.game.add.existing(this.hero);
+};
+
+PlayState._spawnCoin = function (coin) {
+    let sprite = this.coins.create(coin.x, coin.y, 'coin');
+    sprite.anchor.set(0.5, 0.5);
+
+    this.game.physics.enable(sprite);
+    sprite.body.allowGravity = false;
+
+    sprite.animations.add('rotate', [0, 1, 2, 1], 6, true);
+    sprite.animations.play('rotate');
+};
+
+PlayState._onHeroVsCoin = function (hero, coin) {
+    this.sfx.coin.play();
+    coin.kill();
 };
 // ===================================================================
 // entry point
