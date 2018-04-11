@@ -256,7 +256,7 @@ PlayState._loadLevel = function (data) {
     this._spawnKey(data.key.x, data.key.y);
 
     // enable gravity
-    const GRAVITY = 1200;
+    const GRAVITY = 200;
     this.game.physics.arcade.gravity.y = GRAVITY;
 };
 
