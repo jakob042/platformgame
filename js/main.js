@@ -48,7 +48,7 @@ Hero.prototype.jump = function () {
 };
 
 Hero.prototype.bounce = function () {
-    const BOUNCE_SPEED = 400;
+    const BOUNCE_SPEED = 800;
     this.body.velocity.y = -BOUNCE_SPEED;
 };
 
@@ -256,7 +256,7 @@ PlayState._loadLevel = function (data) {
     this._spawnKey(data.key.x, data.key.y);
 
     // enable gravity
-    const GRAVITY = 200;
+    const GRAVITY = 2000;
     this.game.physics.arcade.gravity.y = GRAVITY;
 };
 
@@ -277,7 +277,7 @@ PlayState._spawnEnemyWall = function (x, y, side) {
     // anchor and y displacement
     sprite.anchor.set(side === 'left' ? 1 : 0, 1);
     // physic properties
-    this.game.physics.enable(sprite);
+    this.game.physics.enable(spri33te);
     sprite.body.immovable = true;
     sprite.body.allowGravity = false;
 };
