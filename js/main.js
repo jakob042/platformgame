@@ -256,7 +256,7 @@ PlayState._loadLevel = function (data) {
     this._spawnKey(data.key.x, data.key.y);
 
     // enable gravity
-    const GRAVITY = 2000;
+    const GRAVITY = 1000;
     this.game.physics.arcade.gravity.y = GRAVITY;
 };
 
@@ -277,7 +277,7 @@ PlayState._spawnEnemyWall = function (x, y, side) {
     // anchor and y displacement
     sprite.anchor.set(side === 'left' ? 1 : 0, 1);
     // physic properties
-    this.game.physics.enable(spri33te);
+    this.game.physics.enable(sprite);
     sprite.body.immovable = true;
     sprite.body.allowGravity = false;
 };
