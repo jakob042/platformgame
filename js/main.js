@@ -48,7 +48,7 @@ Hero.prototype.jump = function () {
 };
 
 Hero.prototype.bounce = function () {
-    const BOUNCE_SPEED = 400;
+    const BOUNCE_SPEED = 800;
     this.body.velocity.y = -BOUNCE_SPEED;
 };
 
@@ -256,7 +256,7 @@ PlayState._loadLevel = function (data) {
     this._spawnKey(data.key.x, data.key.y);
 
     // enable gravity
-    const GRAVITY = 200;
+    const GRAVITY = 1000;
     this.game.physics.arcade.gravity.y = GRAVITY;
 };
 
